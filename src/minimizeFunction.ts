@@ -1,4 +1,5 @@
 import axios from "axios";
+import { f1, f2, f3, f4, f5 } from "./constants";
 
 const NOT = "¬";
 const OR = "∨";
@@ -273,39 +274,29 @@ function CheckAreas(area1: { c: string | any[]; }, area2: { c: string | any[]; }
   return true;
 }
 
-async function getKarnos() {
+function getKarnos() {
     if(karnos[0]) return;
-    const tempKarnos: any[] = [];
-    tempKarnos.push((axios.get("https://programforyou.ru/js/json/karno_1.json?v=3")
-    ).then(res=>res.data))
-    tempKarnos.push((axios.get("https://programforyou.ru/js/json/karno_2.json?v=3")
-    ).then(res=>res.data))
-    tempKarnos.push((axios.get("https://programforyou.ru/js/json/karno_3.json?v=3")
-    ).then(res=>res.data))
-    tempKarnos.push((axios.get("https://programforyou.ru/js/json/karno_4.json?v=3")
-    ).then(res=>res.data))
-    tempKarnos.push((axios.get("https://programforyou.ru/js/json/karno_5.json?v=3")
-    ).then(res=>res.data))
-    await Promise.all(tempKarnos);
-    for(const data of tempKarnos) {
-        karnos.push(await data);
-    }
+    karnos.push(f1);
+    karnos.push(f2);
+    karnos.push(f3);
+    karnos.push(f4);
+    karnos.push(f5);
 }
 
-export async function getMinDNF(vector: string) {
+export function getMinDNF(vector: string) {
     const info = getInfoFromVec(vector);
     if (info.is_constant) throw new Error("Function is constant");
-    await getKarnos();
+    getKarnos();
     const karno2 = GetKarnoMap(info, 1);
     const minDNF = MinimifyFunction2(1, info, karno2.table, karnos);
     return minDNF;
 }
 
-export async function getMinKNF(vector: string) {
+export function getMinKNF(vector: string) {
     const info = getInfoFromVec(vector);
   if (info.is_constant) throw new Error("Function is constant");
   const karno = GetKarnoMap(info, 0);
-  await getKarnos();
+  getKarnos();
   const minKNF = MinimifyFunction2(0, info, karno.table, karnos);
   return minKNF;
 }
