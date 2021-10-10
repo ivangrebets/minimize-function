@@ -1,9 +1,10 @@
-const axios = require("axios");
+import axios from "axios";
+
 const NOT = "¬";
 const OR = "∨";
 const AND = "∧";
-function getInfoFromVec(vector) {
-  var result = {
+function getInfoFromVec(vector: string | any[]) {
+  var result: any = {
     vars: [],
     var_values: [],
     vector: [],
@@ -25,7 +26,7 @@ function getInfoFromVec(vector) {
   result.func = "F(" + result.vars.join(", ") + ")";
   for (var i = 0; i < result.total; i++) {
     var var_values = [];
-    var polinom_value = [];
+    var polinom_value: string[] = [];
     for (var j = 0; j < result.n; j++) {
       var bit = (i >> j) & 1;
       var_values.unshift(bit);
@@ -61,25 +62,25 @@ function getInfoFromVec(vector) {
   return result;
 }
 
-function getKD(variable, s, v) {
+function getKD(variable: any, s: number, v: number) {
   return s == v ? variable : MakeNot(variable);
 }
 
-function MakeNot(v) {
+function MakeNot(v: string | string[]) {
   if (v[0] == "(") v = " " + v;
   return "<span class='not'>" + NOT + v + "</span>";
 }
 
-function GetKarnoMap(info, need) {
+function GetKarnoMap(info: { vars: any; var_values?: never[]; vector?: never[]; vector_d: any; func?: string; rpn?: never[]; is_constant?: boolean; constant?: number; n: any; total?: any; polinom_values?: never[]; sdnf?: never[]; sdnf_sets?: never[]; sknf?: never[]; sknf_sets?: never[]; }, need: number) {
   var n1 = Math.floor(info.n / 2);
   var n2 = Math.floor((info.n + 1) / 2);
   var total1 = 1 << n1;
   var total2 = 1 << n2;
   var codes = [];
-  var karno = [];
+  var karno: any = [];
   var map = "<table class='table'>";
   var v = "<sub>";
-  var table = [];
+  var table: any = [];
   for (var i = 0; i < n1; i++) v += info.vars[i];
   v += "</sub> \\ <sup>";
   for (var i = n1; i < info.n; i++) v += info.vars[i];
@@ -94,7 +95,7 @@ function GetKarnoMap(info, need) {
     table[0].push(code.join(""));
   }
   map += "</tr>";
-  var K = [];
+  var K: any = [];
   for (var i = 0; i < total1; i++) {
     karno[i] = [];
     K[i] = [];
@@ -123,7 +124,7 @@ function GetKarnoMap(info, need) {
   };
 }
 
-function GetGrayCode(n, l) {
+function GetGrayCode(n: number, l: number) {
   var code = [];
   for (var i = 0; i < l; i++) code.push(0);
   if (n < 1) return code;
@@ -136,7 +137,7 @@ function GetGrayCode(n, l) {
   return code;
 }
 
-function MinimifyFunction2(need, info, table, karnos) {
+function MinimifyFunction2(need: number, info: { vars: any; var_values?: never[]; vector?: never[]; vector_d: any; func?: string; rpn?: never[]; is_constant?: boolean; constant?: number; n: any; total?: any; polinom_values?: never[]; sdnf?: never[]; sdnf_sets?: never[]; sknf?: never[]; sknf_sets?: never[]; }, table: never[][], karnos: any[]) {
   var res = JSON.parse(JSON.stringify(karnos[info.n - 1]));
   var areas = [];
   for (var i = 0; i < res.length; i++) {
@@ -230,13 +231,13 @@ function MinimifyFunction2(need, info, table, karnos) {
   };
 }
 
-function CheckAllVars(check, vars) {
+function CheckAllVars(check: string | any[], vars: string | any[]) {
   for (var i = 0; i < check.length; i++)
     if (vars.indexOf(check[i]) == -1) return false;
   return true;
 }
 
-function ShowAreaOnKard(table, area) {
+function ShowAreaOnKard(table: string | any[], area: string | any[]) {
   var html = "<table class='table'><tr>";
   for (var j = 0; j < table[0].length; j++)
     html += "<td>" + table[0][j] + "</td>";
@@ -261,14 +262,14 @@ function ShowAreaOnKard(table, area) {
   return html;
 }
 
-function CheckAreas(area1, area2, area) {
+function CheckAreas(area1: { c: string | any[]; }, area2: { c: string | any[]; }, area: { c: string | any[]; }) {
   for (var i = 0; i < area.c.length; i++) {
     var x = area.c[i].x;
     var y = area.c[i].y;
     var i1 = 0;
     while (i1 < area1.c.length && !(area1.c[i1].x == x && area1.c[i1].y === y))
       i1++;
-    i2 = 0;
+    let i2 = 0;
     while (i2 < area2.c.length && !(area2.c[i2].x == x && area2.c[i2].y === y))
       i2++;
     if (i1 == area1.c.length && i2 == area2.c.length) return false;
@@ -278,7 +279,7 @@ function CheckAreas(area1, area2, area) {
 async function main() {
   const info = getInfoFromVec("1000110101101001");
   if (info.is_constant) throw new Error("Function is constant");
-  const karnos = [];
+  const karnos: any[] = [];
   karnos[0] = (
     await axios.get("https://programforyou.ru/js/json/karno_1.json?v=3")
   ).data;
