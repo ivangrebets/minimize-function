@@ -1,7 +1,7 @@
 import { getMinDNF, getMinKNF } from "./minimizeFunction";
 
 async function main() {
-  const string = "10~0~1~1011~1001";
+  const string = "101~1~1~1~010101";
   const arr = [];
 
   for (const [index, value] of string.split("").entries()) {
@@ -9,8 +9,10 @@ async function main() {
   }
   arr.reverse();
   const number = arr.length;
-  let min;
-  let minFunc: string = "";
+  let minDNF = 0;
+  let minKNF = 0;
+  let minDNFFunction: string = "";
+  let minKNFFunction: string = "";
   for (let i = 0; i < number ** 2; ++i) {
     const bin = i.toString(2).split("").reverse();
     const mutString = string.split("");
@@ -18,20 +20,27 @@ async function main() {
       mutString[arr[i]] = bin[i] || "0";
     }
     console.log(mutString.join(""));
-    const temp = await getPrice(mutString.join(""));
-    console.log(temp);
-    if(!Boolean(min) || temp < Number(min) ){
-      min = temp;
-      minFunc = mutString.join("");
+    const [KNF, DNF] = await getKNFAndDNFPRices(mutString.join(""));
+    if(!minDNF || DNF < minDNF) {
+      minDNF = DNF;
+      minDNFFunction = mutString.join("");
     }
+    if(!minKNF || KNF < minKNF) {
+      minKNF = KNF;
+      minKNFFunction = mutString.join("");
+    }
+    
 
   }
-  console.log("!!!");
-  console.log(min);
-  console.log(minFunc);
+  console.log("DNF:")
+  console.log(minDNF);
+  console.log(minDNFFunction);
+  console.log("KNF:")
+  console.log(minKNF);
+  console.log(minKNFFunction);
 }
 
-async function getPrice(vector: string) {
+async function getKNFAndDNFPRices(vector: string) {
   const minDNF = await getMinDNF(vector);
   const minKNF = await getMinKNF(vector);
   let countDNF = 0;
@@ -58,7 +67,7 @@ async function getPrice(vector: string) {
   }
   console.log(countDNF);
   console.log(countKNF)
-  return countDNF > countKNF ? countKNF : countDNF;
+  return [countKNF, countDNF];
 }
 
 main();
